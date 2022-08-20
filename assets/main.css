@@ -1,0 +1,74 @@
+.Board__wrapper {
+    @apply flex justify-center;
+
+}
+.Board {
+    font-size: 0; /*disable white space between inline block element */
+
+    --size: 110px; /* size  */
+    --margin: 2px; /* margin */
+    --ratio: calc(1.732 * var(--size) + 4 * var(--margin) - 1px);
+
+    width: calc((var(--size) + 2 * var(--margin)) * 11);
+}
+
+.Tile {
+    width: var(--size);
+    height: calc(var(--size) * 1.1547);
+
+    margin: var(--margin);
+    clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    margin-bottom: calc(var(--margin) - var(--size) * 0.2885);
+    display: inline-flex;
+    position: relative;
+}
+
+.Tile__content {
+    @apply absolute inset-0 flex flex-row justify-center items-center text-4xl;
+}
+
+.Board::before {
+    content: "";
+    width: calc(var(--size) / 2 + var(--margin));
+    float: left;
+    height: 100%;
+    shape-outside: repeating-linear-gradient(
+            transparent 0 calc(var(--ratio) - 3px),
+            black 0 var(--ratio)
+    );
+}
+
+
+.Tile--hidden {
+    background-color: #fffff022;
+
+}
+.Tile--standard {
+    @apply bg-gray-200;
+}
+
+.Tile--initial-attacker,
+.Tile--initial-defender {
+    @apply bg-gray-300;
+}
+
+.Tile--initial-attacker span {
+    @apply rounded-full bg-yellow-100 inline-block w-8 h-8;
+}
+.Tile--initial-defender span {
+    @apply rounded-full bg-blue-100 inline-block w-8 h-8;
+}
+
+.Tile span:after {
+    /*content: attr(data-index);*/
+    /*@apply text-center text-sm text-red-800;*/
+}
+
+.Tile--point-a,
+.Tile--point-b {
+    @apply bg-blue-200;
+}
+
+.Tile--highlight {
+    @apply bg-red-300;
+}
