@@ -23,6 +23,9 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+env:
+  NUXT_APP_BASE_URL: '/the-queen-game/'
+
 jobs:
   # Build job
   build:

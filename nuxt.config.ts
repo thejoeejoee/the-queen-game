@@ -9,7 +9,4 @@ export default defineNuxtConfig({
         '@/assets/main.css',
     ],
 
-    router: {
-        base: process.env.NODE_ENV !== 'production' ? '/' : '/the-queen-game/'
-    }
 })
