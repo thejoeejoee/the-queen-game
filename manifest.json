@@ -1,17 +1,17 @@
 {
   "node_modules/nuxt/dist/app/entry.mjs": {
-    "file": "_nuxt/entry.7873cc40.mjs",
+    "file": "_nuxt/entry.1cc7088e.mjs",
     "src": "node_modules/nuxt/dist/app/entry.mjs",
     "isEntry": true,
     "dynamicImports": [
       "virtual:nuxt:/home/runner/work/the-queen-game/the-queen-game/.nuxt/error-component.mjs"
     ],
     "css": [
-      "_nuxt/entry.73dc8bf7.css"
+      "_nuxt/entry.bd94d64a.css"
     ]
   },
   "virtual:nuxt:/home/runner/work/the-queen-game/the-queen-game/.nuxt/error-component.mjs": {
-    "file": "_nuxt/error-component.85183d83.mjs",
+    "file": "_nuxt/error-component.8db1b800.mjs",
     "src": "virtual:nuxt:/home/runner/work/the-queen-game/the-queen-game/.nuxt/error-component.mjs",
     "isDynamicEntry": true,
     "imports": [
@@ -23,7 +23,7 @@
     ]
   },
   "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue": {
-    "file": "_nuxt/error-404.c7dde558.mjs",
+    "file": "_nuxt/error-404.492bda2c.mjs",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -34,7 +34,7 @@
     ]
   },
   "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue": {
-    "file": "_nuxt/error-500.4babe2da.mjs",
+    "file": "_nuxt/error-500.299d3b78.mjs",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -44,10 +44,6 @@
       "_nuxt/error-500.08851880.css"
     ]
   },
-  "node_modules/nuxt/dist/app/entry.css": {
-    "file": "_nuxt/entry.73dc8bf7.css",
-    "src": "node_modules/nuxt/dist/app/entry.css"
-  },
   "node_modules/@nuxt/ui-templates/dist/templates/error-404.css": {
     "file": "_nuxt/error-404.7729cee9.css",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.css"
@@ -55,5 +51,9 @@
   "node_modules/@nuxt/ui-templates/dist/templates/error-500.css": {
     "file": "_nuxt/error-500.08851880.css",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.css"
+  },
+  "node_modules/nuxt/dist/app/entry.css": {
+    "file": "_nuxt/entry.bd94d64a.css",
+    "src": "node_modules/nuxt/dist/app/entry.css"
   }
 }
