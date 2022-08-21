@@ -1,4 +1,4 @@
-
+import _ from 'lodash'
 
 export enum UnitClass {
     CLASS_I = 'Ⅰ',
@@ -23,6 +23,7 @@ export class Token {
         return this.owner
     }
 }
+
 export enum TileType {
     HIDDEN = "Tile--hidden",
     STANDARD = "Tile--standard",
@@ -67,75 +68,88 @@ export class Tile {
 export class Game {
     public board: Tile[]
     public highlighted: number[] = []
+    public unassignedTokens: (Token | null)[] = []
+    public selectedToken: Token = null;
 
     constructor() {
-        const line = (length: number, type: TileType) =>
+        const tileLine = (length: number, type: TileType) =>
             Array.from({length,}, _ => new Tile(type))
 
         this.board = [
-            line(2, TileType.HIDDEN),
-            line(3, TileType.STANDARD),
-            line(4, TileType.INITIAL_ATTACKER),
-            line(2, TileType.HIDDEN),
+            tileLine(2, TileType.HIDDEN),
+            tileLine(3, TileType.STANDARD),
+            tileLine(4, TileType.INITIAL_ATTACKER),
+            tileLine(2, TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(1, TileType.INITIAL_DEFENDER),
-            line(3, TileType.STANDARD),
-            line(4, TileType.INITIAL_ATTACKER),
+            tileLine(1, TileType.INITIAL_DEFENDER),
+            tileLine(3, TileType.STANDARD),
+            tileLine(4, TileType.INITIAL_ATTACKER),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(2, TileType.INITIAL_DEFENDER),
-            line(7, TileType.STANDARD),
+            tileLine(2, TileType.INITIAL_DEFENDER),
+            tileLine(7, TileType.STANDARD),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.POINT_A),
-            line(2, TileType.INITIAL_DEFENDER),
-            line(6, TileType.STANDARD),
+            tileLine(2, TileType.INITIAL_DEFENDER),
+            tileLine(6, TileType.STANDARD),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(2, TileType.INITIAL_DEFENDER),
-            line(7, TileType.STANDARD),
+            tileLine(2, TileType.INITIAL_DEFENDER),
+            tileLine(7, TileType.STANDARD),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(1, TileType.INITIAL_DEFENDER),
-            line(6, TileType.STANDARD),
-            line(1, TileType.INITIAL_DEFENDER),
+            tileLine(1, TileType.INITIAL_DEFENDER),
+            tileLine(6, TileType.STANDARD),
+            tileLine(1, TileType.INITIAL_DEFENDER),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(7, TileType.STANDARD),
-            line(2, TileType.INITIAL_DEFENDER),
+            tileLine(7, TileType.STANDARD),
+            tileLine(2, TileType.INITIAL_DEFENDER),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(6, TileType.STANDARD),
-            line(2, TileType.INITIAL_DEFENDER),
+            tileLine(6, TileType.STANDARD),
+            tileLine(2, TileType.INITIAL_DEFENDER),
             new Tile(TileType.POINT_B),
             //
             new Tile(TileType.HIDDEN),
-            line(7, TileType.STANDARD),
-            line(2, TileType.INITIAL_DEFENDER),
+            tileLine(7, TileType.STANDARD),
+            tileLine(2, TileType.INITIAL_DEFENDER),
             new Tile(TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
-            line(4, TileType.INITIAL_ATTACKER),
-            line(3, TileType.STANDARD),
-            line(1, TileType.INITIAL_DEFENDER),
+            tileLine(4, TileType.INITIAL_ATTACKER),
+            tileLine(3, TileType.STANDARD),
+            tileLine(1, TileType.INITIAL_DEFENDER),
             new Tile(TileType.HIDDEN),
             //
-            line(2, TileType.HIDDEN),
-            line(4, TileType.INITIAL_ATTACKER),
-            line(3, TileType.STANDARD),
-            line(2, TileType.HIDDEN),
+            tileLine(2, TileType.HIDDEN),
+            tileLine(4, TileType.INITIAL_ATTACKER),
+            tileLine(3, TileType.STANDARD),
+            tileLine(2, TileType.HIDDEN),
         ].flat()
 
         this.board.forEach((t, i) => t.boardIndex = i)
 
-        this.board[5].token = new Token(UnitClass.CLASS_II, Player.ATTACKER)
-        this.board[22].token = new Token(UnitClass.CLASS_III, Player.DEFENDER)
+        const tokenArray = (length: number, unit: UnitClass, player: Player) =>
+            Array.from({length,}, _ => new Token(unit, player))
+
+        this.unassignedTokens = [
+            tokenArray(4, UnitClass.CLASS_I, Player.ATTACKER),
+            tokenArray(4, UnitClass.CLASS_II, Player.ATTACKER),
+            tokenArray(4, UnitClass.CLASS_III, Player.ATTACKER),
+
+            tokenArray(4, UnitClass.CLASS_I, Player.DEFENDER),
+            tokenArray(4, UnitClass.CLASS_II, Player.DEFENDER),
+            tokenArray(4, UnitClass.CLASS_III, Player.DEFENDER),
+        ].flat()
+
         this.board[32].token = new Token(UnitClass.CLASS_QUEEN, Player.DEFENDER)
     }
 
@@ -160,8 +174,37 @@ export class Game {
         )
     }
 
-    public click(tile: Tile) {
-        this.highlighted = this.getNeighbourTiles(tile).map(t => t.boardIndex)
+    public tileClick(tile: Tile) {
+        if (this.selectedToken && this.highlighted.includes(tile.boardIndex)) {
+            this.assignTokenToTile(this.selectedToken, tile)
+            this.selectedToken = null
+            this.highlighted = []
+        }
+        // this.highlighted = this.getNeighbourTiles(tile).map(t => t.boardIndex)
+    }
+
+    public assignTokenToTile(token: Token, tile: Tile) {
+        tile.token = token
+        this.unassignedTokens = this.unassignedTokens.map(t => t === token ? null : t)
+    }
+
+    public selectUnassignedToken(t: Token) {
+        this.selectedToken = t;
+        const type = t.owner === Player.DEFENDER ? TileType.INITIAL_DEFENDER : TileType.INITIAL_ATTACKER;
+        this.highlighted = this.board.filter(
+            t => t.type === type
+        ).map(t => t.boardIndex)
+    }
+
+    public assignRandom() {
+        this.unassignedTokens.filter(_.identity).map(token => {
+            const type = token.owner === Player.DEFENDER ? TileType.INITIAL_DEFENDER : TileType.INITIAL_ATTACKER;
+
+            const tile = _.sample(this.board.filter(t => t.type === type && t.token === null))
+
+            this.assignTokenToTile(token, tile)
+            return null;
+        })
     }
 
     public toJSON() {

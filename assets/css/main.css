@@ -1,7 +1,7 @@
 .Board__wrapper {
     @apply flex justify-center;
-
 }
+
 .Board {
     font-size: 0; /*disable white space between inline block element */
 
