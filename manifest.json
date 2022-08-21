@@ -1,6 +1,6 @@
 {
   "node_modules/nuxt/dist/app/entry.mjs": {
-    "file": "_nuxt/entry.cd3d4205.mjs",
+    "file": "_nuxt/entry.0251c5fb.mjs",
     "src": "node_modules/nuxt/dist/app/entry.mjs",
     "isEntry": true,
     "dynamicImports": [
@@ -11,7 +11,7 @@
     ]
   },
   "virtual:nuxt:/home/runner/work/the-queen-game/the-queen-game/.nuxt/error-component.mjs": {
-    "file": "_nuxt/error-component.6159e147.mjs",
+    "file": "_nuxt/error-component.97b9d2ed.mjs",
     "src": "virtual:nuxt:/home/runner/work/the-queen-game/the-queen-game/.nuxt/error-component.mjs",
     "isDynamicEntry": true,
     "imports": [
@@ -23,7 +23,7 @@
     ]
   },
   "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue": {
-    "file": "_nuxt/error-404.81c342b7.mjs",
+    "file": "_nuxt/error-404.f9ce3367.mjs",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-404.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -34,7 +34,7 @@
     ]
   },
   "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue": {
-    "file": "_nuxt/error-500.bfcfde0c.mjs",
+    "file": "_nuxt/error-500.8adc834c.mjs",
     "src": "node_modules/@nuxt/ui-templates/dist/templates/error-500.vue",
     "isDynamicEntry": true,
     "imports": [
