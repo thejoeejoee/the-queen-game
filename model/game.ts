@@ -1,3 +1,28 @@
+
+
+export enum UnitClass {
+    CLASS_I = 'Ⅰ',
+    CLASS_II = 'Ⅱ',
+    CLASS_III = 'Ⅲ',
+    CLASS_QUEEN = '👑',
+}
+
+export enum Player {
+    ATTACKER = 'Token--attacker',
+    DEFENDER = 'Token--defender',
+}
+
+export class Token {
+    constructor(
+        public readonly unitClass: UnitClass,
+        public readonly owner: Player
+    ) {
+    }
+
+    get cssClass() {
+        return this.owner
+    }
+}
 export enum TileType {
     HIDDEN = "Tile--hidden",
     STANDARD = "Tile--standard",
@@ -10,7 +35,8 @@ export enum TileType {
 }
 
 export class Tile {
-    public index: number;
+    public boardIndex: number;
+    public token: Token = null;
 
     constructor(
         public readonly type: TileType = TileType.STANDARD,
@@ -29,9 +55,12 @@ export class Tile {
             case TileType.POINT_B:
                 return 'B'
             default:
-                return '&nbsp;'
-
+                return ''
         }
+    }
+
+    get isInitial() {
+        return [TileType.INITIAL_ATTACKER, TileType.INITIAL_DEFENDER].includes(this.type)
     }
 }
 
@@ -44,12 +73,10 @@ export class Game {
             Array.from({length,}, _ => new Tile(type))
 
         this.board = [
-            new Tile(TileType.HIDDEN),
-            new Tile(TileType.HIDDEN),
+            line(2, TileType.HIDDEN),
             line(3, TileType.STANDARD),
             line(4, TileType.INITIAL_ATTACKER),
-            new Tile(TileType.HIDDEN),
-            new Tile(TileType.HIDDEN),
+            line(2, TileType.HIDDEN),
             //
             new Tile(TileType.HIDDEN),
             line(1, TileType.INITIAL_DEFENDER),
@@ -99,22 +126,24 @@ export class Game {
             line(1, TileType.INITIAL_DEFENDER),
             new Tile(TileType.HIDDEN),
             //
-            new Tile(TileType.HIDDEN),
-            new Tile(TileType.HIDDEN),
+            line(2, TileType.HIDDEN),
             line(4, TileType.INITIAL_ATTACKER),
             line(3, TileType.STANDARD),
-            new Tile(TileType.HIDDEN),
-            new Tile(TileType.HIDDEN),
+            line(2, TileType.HIDDEN),
         ].flat()
 
-        this.board.forEach((t, i) => t.index = i)
+        this.board.forEach((t, i) => t.boardIndex = i)
+
+        this.board[5].token = new Token(UnitClass.CLASS_II, Player.ATTACKER)
+        this.board[22].token = new Token(UnitClass.CLASS_III, Player.DEFENDER)
+        this.board[32].token = new Token(UnitClass.CLASS_QUEEN, Player.DEFENDER)
     }
 
 
     public getNeighbourTiles(tile: Tile): Tile[] {
         if (tile.type === TileType.HIDDEN) return [];
 
-        const i = tile.index;
+        const i = tile.boardIndex;
         const board_length = this.board.length
         // check fox new wrapped line not needed, since
         // the next tile on new line is always a hidden tile
@@ -132,7 +161,7 @@ export class Game {
     }
 
     public click(tile: Tile) {
-        this.highlighted = this.getNeighbourTiles(tile).map(t => t.index)
+        this.highlighted = this.getNeighbourTiles(tile).map(t => t.boardIndex)
     }
 
     public toJSON() {

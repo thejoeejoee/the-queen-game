@@ -12,21 +12,6 @@
     width: calc((var(--size) + 2 * var(--margin)) * 11);
 }
 
-.Tile {
-    width: var(--size);
-    height: calc(var(--size) * 1.1547);
-
-    margin: var(--margin);
-    clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
-    margin-bottom: calc(var(--margin) - var(--size) * 0.2885);
-    display: inline-flex;
-    position: relative;
-}
-
-.Tile__content {
-    @apply absolute inset-0 flex flex-row justify-center items-center text-4xl;
-}
-
 .Board::before {
     content: "";
     width: calc(var(--size) / 2 + var(--margin));
@@ -38,6 +23,24 @@
     );
 }
 
+.Tile {
+    width: var(--size);
+    height: calc(var(--size) * 1.1547);
+
+    margin: var(--margin);
+    clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+    margin-bottom: calc(var(--margin) - var(--size) * 0.2885);
+    display: inline-flex;
+    position: relative;
+}
+
+.Tile:not(.Tile--hidden) {
+     @apply cursor-pointer;
+}
+
+.Tile__content {
+    @apply absolute inset-0 flex flex-row justify-center items-center text-xl;
+}
 
 .Tile--hidden {
     background-color: #fffff022;
@@ -52,14 +55,42 @@
     @apply bg-gray-300;
 }
 
-.Tile--initial-attacker span {
-    @apply rounded-full bg-yellow-100 inline-block w-8 h-8;
-}
-.Tile--initial-defender span {
-    @apply rounded-full bg-blue-100 inline-block w-8 h-8;
+.Token {
+    @apply rounded-full w-16 h-16 flex flex-row justify-center items-center;
 }
 
-.Tile span:after {
+.Token--unit {
+    @apply
+        border-4 shadow
+        font-mono font-bold text-center text-4xl
+        w-16 h-16;
+    line-height: normal;
+}
+
+.Token--attacker {
+    @apply bg-yellow-300 border-yellow-200;
+}
+
+.Token--defender {
+    @apply bg-blue-300 border-blue-200;
+}
+
+.Token--initial {
+    @apply w-6 h-6 opacity-70;
+}
+
+.Token--point {
+    @apply w-auto h-auto text-3xl;
+}
+
+.Tile--initial-attacker .Token--initial {
+    @apply bg-yellow-100;
+}
+.Tile--initial-defender .Token--initial {
+    @apply bg-blue-100;
+}
+
+.Tile__content:after {
     /*content: attr(data-index);*/
     /*@apply text-center text-sm text-red-800;*/
 }
