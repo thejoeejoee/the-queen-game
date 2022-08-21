@@ -12,6 +12,15 @@ export enum Player {
     DEFENDER = 'Token--defender',
 }
 
+export enum GameStatus {
+    PREPARING = 'preparing',
+    DEFENDER_IS_PLAYING = 'defender',
+    ATTACKER_IS_PLAYING = 'attacker',
+
+    DEFENDER_WON = 'defender_won',
+    ATTACKER_WON = 'attacker_won'
+}
+
 export class Token {
     public isHighlighted: boolean = false
 
@@ -72,6 +81,9 @@ export class Game {
     public board: Tile[]
     public unassignedTokens: (Token | null)[] = []
     public selectedToken: Token = null;
+    public selectedTile: Tile = null
+
+    public status : GameStatus = GameStatus.PREPARING;
 
     constructor() {
         const tileLine = (length: number, type: TileType) =>
@@ -155,7 +167,6 @@ export class Game {
         this.board[32].token = new Token(UnitClass.CLASS_QUEEN, Player.DEFENDER)
     }
 
-
     public getNeighbourTiles(tile: Tile): Tile[] {
         if (tile.type === TileType.HIDDEN) return [];
 
@@ -177,14 +188,63 @@ export class Game {
     }
 
     public tileClick(tile: Tile) {
-        if (this.selectedToken && tile.isHighlighted) {
-            // assign new tile to board
-            this.assignTokenToTile(this.selectedToken, tile)
-            this.selectedToken.isHighlighted = false
-            this.selectedToken = null
-            this.deHighlightAllTiles()
+        if (this.status === GameStatus.PREPARING) {
+            this.onTileClickInPrepare(tile)
         }
         // this.highlighted = this.getNeighbourTiles(tile).map(t => t.boardIndex)
+    }
+
+    protected onTileClickInPrepare(tile: Tile) {
+        if (this.selectedToken) {
+            if (tile.isHighlighted) {
+                // selected token and new tile is clicked
+                if (this.selectedTile) {
+                    // remove from before
+                    this.selectedTile.token = null
+                    this.selectedTile = null
+                }
+
+                // assign new tile to board
+                this.assignTokenToTile(this.selectedToken, tile)
+                this.resetTokenSelection()
+            } else {
+                // token is selected, but tile is not target:
+                // select token, if tile does have one
+                if (tile.token) {
+                    this.selectToken(tile.token, tile)
+                } else {
+                    this.resetTokenSelection()
+                }
+            }
+        } else if (tile.token) {
+            this.selectToken(tile.token, tile)
+        }
+    }
+
+    protected selectToken(token: Token, tile: Tile = null, tileTypeHighlight : TileType = null) {
+        this.deHighlightAllTiles()
+        this.deHighlightAllTokens()
+
+        token.isHighlighted = true
+        this.selectedToken = token
+        this.selectedTile = tile
+
+        this.board.filter(
+            t => t.type === (tileTypeHighlight || tile.type) && !t.token
+        ).map(
+            t => t.isHighlighted = true
+        )
+    }
+
+    protected resetTokenSelection() {
+        if (this.selectedToken)
+            this.selectedToken.isHighlighted = false
+        this.selectedToken = null
+        if (this.selectedTile)
+            this.selectedTile.isHighlighted = false
+        this.selectedTile = null
+        this.deHighlightAllTiles()
+        this.deHighlightAllTokens()
     }
 
     public deHighlightAllTiles() {
@@ -208,15 +268,8 @@ export class Game {
     }
 
     public selectUnassignedToken(t: Token) {
-        this.deHighlightAllTokens()
-        this.selectedToken = t;
-        t.isHighlighted = true
         const type = t.owner === Player.DEFENDER ? TileType.INITIAL_DEFENDER : TileType.INITIAL_ATTACKER;
-        this.board.filter(
-            t => t.type === type
-        ).map(
-            t => t.isHighlighted = true
-        )
+        this.selectToken(t, null, type)
     }
 
     public assignRandom() {
@@ -234,6 +287,10 @@ export class Game {
 
     get isStartable() {
         return this.unassignedTokens.filter(_.identity).length === 0
+    }
+
+    public startGame() {
+        this.status = GameStatus.DEFENDER_IS_PLAYING;
     }
 
     public toJSON() {

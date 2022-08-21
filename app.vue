@@ -63,25 +63,30 @@
       >assign random</button>
 
       <button
+        v-if="game.status === GameStatus.PREPARING"
         class="
           border-none block py-2 w-full
           bg-gray-300
           text-center font-bold text-2xl uppercase disabled:text-gray-400 text-green-800
         "
         :disabled="!game.isStartable"
-        @click="game.assignRandom()"
+        @click="game.startGame()"
       >start game</button>
+
+      <div class="text-center">
+         {{ game.status }}
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import {Game} from "./model/game";
+import {Game, GameStatus} from "./model/game";
 import Token from "./Token";
 
 export default {
   components: {Token},
-  data: () => ({game: new Game()})
+  data: () => ({game: new Game(), GameStatus})
 }
 </script>
