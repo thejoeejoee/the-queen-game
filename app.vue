@@ -8,6 +8,7 @@
           v-for="tile in game.board"
           :class="[tile.cssClass, {
             'Tile--highlight': tile.isHighlighted,
+            'Tile--has-unit': tile.token,
           }]"
           class="Tile"
           @click="game.tileClick(tile)"

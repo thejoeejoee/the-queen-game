@@ -35,7 +35,11 @@
 }
 
 .Tile:not(.Tile--hidden) {
-     @apply cursor-pointer transition-colors;
+    @apply select-none transition-colors;
+}
+
+.Tile--has-unit, .Tile--highlight {
+    @apply cursor-pointer;
 }
 
 .Tile__content {
@@ -46,6 +50,7 @@
     background-color: #fffff022;
 
 }
+
 .Tile--standard {
     @apply bg-gray-200;
 }
@@ -56,14 +61,16 @@
 }
 
 .Token {
-    @apply rounded-full w-16 h-16 flex flex-row justify-center items-center transition-colors;
+    @apply
+        rounded-full w-16 h-16 flex flex-row justify-center items-center transition-colors
+    ;
 }
 
 .Token--unit {
     @apply
-        border-4 shadow
-        font-mono font-bold text-center text-4xl
-        w-16 h-16;
+    border-4 shadow
+    font-mono font-bold text-center text-4xl
+    w-16 h-16;
     line-height: normal;
 }
 
@@ -90,6 +97,7 @@
 .Tile--initial-attacker .Token--initial {
     @apply bg-yellow-100;
 }
+
 .Tile--initial-defender .Token--initial {
     @apply bg-blue-100;
 }
@@ -107,6 +115,11 @@
 .Tile--highlight {
     @apply bg-green-600;
 }
-.Tile--highlight .Token {
+
+.Tile--highlight .Token--initial {
     @apply animate-ping;
+}
+
+.Tile--highlight.Tile--has-unit {
+    @apply bg-red-300;
 }

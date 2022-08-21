@@ -83,7 +83,7 @@ export class Game {
     public selectedToken: Token = null;
     public selectedTile: Tile = null
 
-    public status : GameStatus = GameStatus.PREPARING;
+    public status: GameStatus = GameStatus.PREPARING;
 
     constructor() {
         const tileLine = (length: number, type: TileType) =>
@@ -190,8 +190,28 @@ export class Game {
     public tileClick(tile: Tile) {
         if (this.status === GameStatus.PREPARING) {
             this.onTileClickInPrepare(tile)
+        } else if (this.selectedToken && tile.isHighlighted) {
+            // game move
+            tile.token = this.selectedToken
+            this.selectedTile.token = null
+            this.selectedTile = this.selectedToken = null
+
+            this.deHighlightAllTiles()
+            this.deHighlightAllTokens()
+
+        } else if (!this.selectedToken && tile.token) {
+            // token selection for move
+            this.selectedToken = tile.token
+            this.selectedToken.isHighlighted = true
+            this.selectedTile = tile
+
+            this.getNeighbourTiles(tile).filter(
+                t => !t.token || (t.token.owner != tile.token.owner)
+            ).map(
+                t => t.isHighlighted = true
+            )
         }
-        // this.highlighted = this.getNeighbourTiles(tile).map(t => t.boardIndex)
+
     }
 
     protected onTileClickInPrepare(tile: Tile) {
@@ -211,17 +231,17 @@ export class Game {
                 // token is selected, but tile is not target:
                 // select token, if tile does have one
                 if (tile.token) {
-                    this.selectToken(tile.token, tile)
+                    this.selectTokenForRelocation(tile.token, tile)
                 } else {
                     this.resetTokenSelection()
                 }
             }
         } else if (tile.token) {
-            this.selectToken(tile.token, tile)
+            this.selectTokenForRelocation(tile.token, tile)
         }
     }
 
-    protected selectToken(token: Token, tile: Tile = null, tileTypeHighlight : TileType = null) {
+    protected selectTokenForRelocation(token: Token, tile: Tile = null, tileTypeHighlight: TileType = null) {
         this.deHighlightAllTiles()
         this.deHighlightAllTokens()
 
@@ -269,7 +289,7 @@ export class Game {
 
     public selectUnassignedToken(t: Token) {
         const type = t.owner === Player.DEFENDER ? TileType.INITIAL_DEFENDER : TileType.INITIAL_ATTACKER;
-        this.selectToken(t, null, type)
+        this.selectTokenForRelocation(t, null, type)
     }
 
     public assignRandom() {
