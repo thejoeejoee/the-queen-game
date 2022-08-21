@@ -13,6 +13,8 @@ export enum Player {
 }
 
 export class Token {
+    public isHighlighted: boolean = false
+
     constructor(
         public readonly unitClass: UnitClass,
         public readonly owner: Player
@@ -36,8 +38,9 @@ export enum TileType {
 }
 
 export class Tile {
-    public boardIndex: number;
-    public token: Token = null;
+    public boardIndex: number
+    public token: Token = null
+    public isHighlighted: boolean = false
 
     constructor(
         public readonly type: TileType = TileType.STANDARD,
@@ -67,7 +70,6 @@ export class Tile {
 
 export class Game {
     public board: Tile[]
-    public highlighted: number[] = []
     public unassignedTokens: (Token | null)[] = []
     public selectedToken: Token = null;
 
@@ -175,12 +177,29 @@ export class Game {
     }
 
     public tileClick(tile: Tile) {
-        if (this.selectedToken && this.highlighted.includes(tile.boardIndex)) {
+        if (this.selectedToken && tile.isHighlighted) {
+            // assign new tile to board
             this.assignTokenToTile(this.selectedToken, tile)
+            this.selectedToken.isHighlighted = false
             this.selectedToken = null
-            this.highlighted = []
+            this.deHighlightAllTiles()
         }
         // this.highlighted = this.getNeighbourTiles(tile).map(t => t.boardIndex)
+    }
+
+    public deHighlightAllTiles() {
+        this.board.map(
+            t => t.isHighlighted = false
+        )
+    }
+
+    public deHighlightAllTokens() {
+        this.board.filter(t => t.token).map(
+            t => t.token.isHighlighted = false
+        )
+        this.unassignedTokens.filter(_.identity).map(
+            t => t.isHighlighted = false
+        )
     }
 
     public assignTokenToTile(token: Token, tile: Tile) {
@@ -189,14 +208,20 @@ export class Game {
     }
 
     public selectUnassignedToken(t: Token) {
+        this.deHighlightAllTokens()
         this.selectedToken = t;
+        t.isHighlighted = true
         const type = t.owner === Player.DEFENDER ? TileType.INITIAL_DEFENDER : TileType.INITIAL_ATTACKER;
-        this.highlighted = this.board.filter(
+        this.board.filter(
             t => t.type === type
-        ).map(t => t.boardIndex)
+        ).map(
+            t => t.isHighlighted = true
+        )
     }
 
     public assignRandom() {
+        this.selectedToken = null
+        this.deHighlightAllTiles()
         this.unassignedTokens.filter(_.identity).map(token => {
             const type = token.owner === Player.DEFENDER ? TileType.INITIAL_DEFENDER : TileType.INITIAL_ATTACKER;
 
@@ -205,6 +230,10 @@ export class Game {
             this.assignTokenToTile(token, tile)
             return null;
         })
+    }
+
+    get isStartable() {
+        return this.unassignedTokens.filter(_.identity).length === 0
     }
 
     public toJSON() {
