@@ -35,7 +35,7 @@
 }
 
 .Tile:not(.Tile--hidden) {
-     @apply cursor-pointer;
+     @apply cursor-pointer transition-colors;
 }
 
 .Tile__content {
@@ -56,7 +56,7 @@
 }
 
 .Token {
-    @apply rounded-full w-16 h-16 flex flex-row justify-center items-center;
+    @apply rounded-full w-16 h-16 flex flex-row justify-center items-center transition-colors;
 }
 
 .Token--unit {
@@ -72,7 +72,7 @@
 }
 
 .Token--highlight {
-    @apply border-red-400;
+    @apply border-green-600;
 }
 
 .Token--defender {
@@ -105,5 +105,8 @@
 }
 
 .Tile--highlight {
-    @apply bg-red-300;
+    @apply bg-green-600;
+}
+.Tile--highlight .Token {
+    @apply animate-ping;
 }
